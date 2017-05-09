@@ -6,6 +6,6 @@
 
 #### Troubleshooting
 
-Make sure the server's ssh key has been added to the configuration repo
-Make sure the correct user and path are specified in the `config/deploy` file 
+1. Make sure the server's ssh key has been added to the configuration repo
+2. Make sure the correct user and path are specified in the `config/deploy` file 
 
