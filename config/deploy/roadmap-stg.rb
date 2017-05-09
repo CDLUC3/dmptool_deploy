@@ -14,7 +14,7 @@ set :deploy_to, '/dmp/apps/roadmap'
 set :share_to, 'dmp/apps/roadmap/shared'
 
 # Define the location of the configuration repo
-set :config_repo, 'git@github.com:cdlib/dmptool_config.git'
+set :config_repo, 'git@github.com:CDLUC3/roadmap_deploy.git'
 set :config_branch, 'roadmap-stage'
 
 # role-based syntax
