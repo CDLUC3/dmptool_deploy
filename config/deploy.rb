@@ -58,6 +58,8 @@ namespace :deploy do
   before :deploy, 'config:install_shared_dir'
   
   after :deploy, 'cleanup:remove_example_configs'
+  
+  after :deploy, 'cleanup:bundler'
     
   after :deploy, 'deploy:restart_passenger'
   
@@ -86,6 +88,19 @@ namespace :cleanup do
       execute "rm -f #{release_path}/config/*_example.yml"
       execute "rm -f #{release_path}/config/initializers/contac_us_example.rb"
       execute "rm -f #{release_path}/config/initializers/*.rb.example"
+    end
+  end
+  
+  desc 'Comment out the Postgres gem and run bundler'
+  task :bundler do
+    on roles(:app), wait: 1 do
+      # Comment out the Postgres gem
+      execute "cd #{release_path} && mv Gemfile Gemfile.bak"
+      execute "cd #{release_path} && cat Gemfile.bak | sed 's/gem \\x27pg\\x27/#gem \\x27pg\\x27/' >> Gemfile"
+      
+      # Run bundler and then any db migrations
+      execute "cd #{release_path} && bundle install --without test"
+      execute "cd #{release_path} && bundle exec rake db:migrate RAILS_ENV=#{fetch :rails_env}"
     end
   end
 end
