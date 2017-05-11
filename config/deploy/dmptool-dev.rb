@@ -21,7 +21,7 @@ set :config_branch, 'dmptool-development'
 append :linked_files, 'assets/images/logo.jpg', 
                       'assets/images/favicon.ico',
                       'assets/stylesheets/admin.css.less', 
-                      'assets/stylesheets/boostrap_and_overrides.css.less'y
+                      'assets/stylesheets/boostrap_and_overrides.css.less'
 
 # role-based syntax
 # ==================

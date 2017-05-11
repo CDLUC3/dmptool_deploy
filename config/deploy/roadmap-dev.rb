@@ -18,7 +18,12 @@ set :config_repo, 'git@github.com:cdlib/dmptool_config.git'
 set :config_branch, 'roadmap-development'
 
 # Pull in shibboleth IdP selection pages
-append :linked_files, 'public/*'
+append :linked_files, 'public/eds.html',
+                      'public/fullDiscoFeed.json',
+                      'public/idpselect_config.js',
+                      'public/idpselect.css',
+                      'public/idpselect.js',
+                      'public/localDiscoFeed.json'
 
 # role-based syntax
 # ==================
