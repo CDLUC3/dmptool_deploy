@@ -17,6 +17,9 @@ set :share_to, 'dmp/apps/roadmap/shared'
 set :config_repo, 'git@github.com:cdlib/dmptool_config.git'
 set :config_branch, 'roadmap-development'
 
+# Pull in shibboleth IdP selection pages
+append :linked_files, 'public/*'
+
 # role-based syntax
 # ==================
 
