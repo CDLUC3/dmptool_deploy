@@ -17,6 +17,9 @@ set :share_to, 'dmp/apps/roadmap/shared'
 set :config_repo, 'git@github.com:cdlib/dmptool_config.git'
 set :config_branch, 'roadmap-stage'
 
+# Swap in Shib enabled application.rb
+append :linked_files, 'config/application.rb'
+
 # role-based syntax
 # ==================
 
