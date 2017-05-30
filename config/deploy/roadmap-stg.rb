@@ -72,5 +72,5 @@ append :linked_files, 'config/application.rb'
 #   }
 
 # We are running stage as if it were a prod environment right now
-set :rails_env, 'production'
+set :rails_env, 'stage'
 set :passenger_restart, "cd /apps/dmp/init.d && ./passenger-dmp.dmp restart"
