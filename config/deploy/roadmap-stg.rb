@@ -74,3 +74,15 @@ append :linked_files, 'config/application.rb'
 # We are running stage as if it were a prod environment right now
 set :rails_env, 'stage'
 set :passenger_restart, "cd /apps/dmp/init.d && ./passenger-dmp.dmp restart"
+
+namespace :deploy do
+  # We treat STAGE as a production-like environment so force the asset precompilation
+  desc 'Precompile Assets'
+  task :precompile_assets do
+    on roles(:app), wait: 5 do
+      execute "cd #{release_path} && bundle exec rake assets:precompile"
+    end
+  end
+  
+  before :restart_passenger, 'deploy:precompile_assets'
+end

@@ -41,7 +41,7 @@ append :linked_files, #'assets/images/logo.jpg',
                       'config/locales/static_pages/fr.static.yml'
 
 # Default value for linked_dirs is []
-append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'public/system'
+append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'public/system', 'config/environments'
 
 # Default value for keep_releases is 5
 set :keep_releases, 5
