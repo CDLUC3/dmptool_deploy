@@ -25,9 +25,6 @@ append :linked_files, 'public/eds.html',
                       'public/idpselect.js',
                       'public/localDiscoFeed.json'
 
-# Swap in Shib enabled application.rb
-append :linked_files, 'config/application.rb'
-
 # role-based syntax
 # ==================
 

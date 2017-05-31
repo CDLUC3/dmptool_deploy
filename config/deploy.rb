@@ -47,31 +47,31 @@ append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'public/syst
 set :keep_releases, 5
 
 namespace :deploy do
-  
-  desc 'Restart Phusion'
-  task :restart_passenger do
-    on roles(:app), wait: 5 do
-      execute "#{fetch :passenger_restart}"
-    end
-  end
-  
   before :deploy, 'config:install_shared_dir'
   
   after :deploy, 'cleanup:remove_example_configs'
   
-  after :deploy, 'cleanup:bundler'
+#  after :deploy, 'cleanup:bundler'
     
-  after :deploy, 'deploy:restart_passenger'
+  after :deploy, 'cleanup:restart_passenger'
+end
+
+namespace :git do
+  after :create_release, 'remove_postgres'
   
-  after :restart_passenger, :clear_cache do
-    on roles(:web), in: :groups, limit: 3, wait: 10 do
+  desc 'Remove the postgres dependency from the Gemfile'
+  task :remove_postgres do
+    on roles(:app), wait: 1 do
+      # Comment out the Postgres gem
+      execute "cd #{release_path} && mv Gemfile Gemfile.bak"
+      execute "cd #{release_path} && cat Gemfile.bak | sed 's/gem \\x27pg\\x27/#gem \\x27pg\\x27/' >> Gemfile"
+      execute "cd #{release_path} && bundle install --without test"
     end
   end
-
 end
 
 namespace :config do
-  desc 'Install the shared config files into the capistrano /shared dir'
+  desc 'Setup up the config repo as the shared directory'
   task :install_shared_dir do
     on roles(:app), wait: 1 do
       execute "if [ ! -d '#{deploy_path}/shared/' ]; then cd #{deploy_path}/ && git clone #{fetch :config_repo} shared; fi"
@@ -90,17 +90,26 @@ namespace :cleanup do
       execute "rm -f #{release_path}/config/initializers/*.rb.example"
     end
   end
-  
+=begin  
   desc 'Comment out the Postgres gem and run bundler'
   task :bundler do
     on roles(:app), wait: 1 do
-      # Comment out the Postgres gem
-      execute "cd #{release_path} && mv Gemfile Gemfile.bak"
-      execute "cd #{release_path} && cat Gemfile.bak | sed 's/gem \\x27pg\\x27/#gem \\x27pg\\x27/' >> Gemfile"
-      
       # Run bundler and then any db migrations
       execute "cd #{release_path} && bundle install --without test"
       execute "cd #{release_path} && bundle exec rake db:migrate RAILS_ENV=#{fetch :rails_env}"
+    end
+  end
+=end
+  
+  desc 'Restart Phusion Passenger'
+  task :restart_passenger do
+    on roles(:app), wait: 5 do
+      execute "#{fetch :passenger_restart}"
+    end
+  end
+  
+  after :restart_passenger, :clear_cache do
+    on roles(:web), in: :groups, limit: 3, wait: 10 do
     end
   end
 end

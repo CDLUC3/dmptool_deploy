@@ -8,6 +8,12 @@ GEM
       i18n
       rake (>= 10.0.0)
       sshkit (>= 1.9.0)
+    capistrano-bundler (1.2.0)
+      capistrano (~> 3.1)
+      sshkit (~> 1.2)
+    capistrano-rails (1.2.3)
+      capistrano (~> 3.1)
+      capistrano-bundler (~> 1.1)
     i18n (0.8.1)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
@@ -22,6 +28,7 @@ PLATFORMS
 
 DEPENDENCIES
   capistrano (~> 3.8)
+  capistrano-rails (~> 1.2)
 
 BUNDLED WITH
    1.10.6

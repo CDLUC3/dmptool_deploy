@@ -13,12 +13,15 @@ set :default_env, { path: "/dmp/local/bin:$PATH" }
 set :deploy_to, '/dmp/apps/roadmap'
 set :share_to, 'dmp/apps/roadmap/shared'
 
+# precompile assets
+set :assets_roles, [:web, :app]
+set :assets_prefix, 'assets'
+set :rails_assets_groups, :assets
+set :keep_assets, 2
+
 # Define the location of the configuration repo
 set :config_repo, 'git@github.com:cdlib/dmptool_config.git'
 set :config_branch, 'roadmap-stage'
-
-# Swap in Shib enabled application.rb
-append :linked_files, 'config/application.rb'
 
 # role-based syntax
 # ==================
@@ -74,7 +77,7 @@ append :linked_files, 'config/application.rb'
 # We are running stage as if it were a prod environment right now
 set :rails_env, 'stage'
 set :passenger_restart, "cd /apps/dmp/init.d && ./passenger-dmp.dmp restart"
-
+=begin
 namespace :deploy do
   # We treat STAGE as a production-like environment so force the asset precompilation
   desc 'Precompile Assets'
@@ -86,3 +89,4 @@ namespace :deploy do
   
   before :restart_passenger, 'deploy:precompile_assets'
 end
+=end
