@@ -23,7 +23,9 @@ append :linked_files, 'public/eds.html',
                       'public/idpselect_config.js',
                       'public/idpselect.css',
                       'public/idpselect.js',
-                      'public/localDiscoFeed.json'
+                      'public/localDiscoFeed.json',
+                      'lib/assets/images/logo.jpg',
+                      'lib/assets/stylesheets/roadmap.scss'
 
 # role-based syntax
 # ==================
