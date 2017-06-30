@@ -1,11 +1,11 @@
-set :application, 'DMPRoadmap'
+set :application, 'DMPTool'
 set :repo_url, 'https://github.com/CDLUC3/roadmap.git' #'https://github.com/DMPRoadmap/roadmap.git'
 
 # server-based syntax
 # ======================
 # Defines a single server with a list of roles and multiple properties.
 # You can define all roles on a single server, or split them:
-set :server_host, ENV["SERVER_HOST"] || 'uc3-roadmap-dev.cdlib.org'
+set :server_host, ENV["SERVER_HOST"] || 'uc3-roadmaptest-dev.cdlib.org'
 server fetch(:server_host), user: 'dmp', roles: %w{web app db}
 
 # Default deploy_to directory is /var/www/my_app_name
@@ -15,7 +15,7 @@ set :share_to, 'dmp/apps/roadmap/shared'
 
 # Define the location of the configuration repo
 set :config_repo, 'git@github.com:cdlib/dmptool_config.git'
-set :config_branch, 'roadmap-development'
+set :config_branch, 'roadmap-migration'
 
 # Pull in shibboleth IdP selection pages
 append :linked_files, 'public/eds.html',
@@ -78,5 +78,5 @@ append :linked_files, 'public/eds.html',
 #     # password: "please use keys"
 #   }
 
-set :rails_env, 'development'
+set :rails_env, 'migration'
 set :passenger_restart, "cd /apps/dmp/init.d && ./passenger-dmp.dmp restart"
