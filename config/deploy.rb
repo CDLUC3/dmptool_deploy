@@ -58,6 +58,7 @@ end
 
 namespace :git do
   after :create_release, 'remove_postgres'
+  after :create_release, 'npm_install'
   
   desc 'Remove the postgres dependency from the Gemfile'
   task :remove_postgres do
@@ -66,6 +67,13 @@ namespace :git do
       execute "cd #{release_path} && mv Gemfile Gemfile.bak"
       execute "cd #{release_path} && cat Gemfile.bak | sed 's/gem \\x27pg\\x27/#gem \\x27pg\\x27/' >> Gemfile"
       execute "cd #{release_path} && bundle install --without test"
+    end
+  end
+
+  desc 'Install all of the resources managed by NPM'
+  task :npm_install do
+    on roles(:app), wait: 1 do
+      execute "cd #{release_path}/vendor && npm install && cd .."
     end
   end
 end
@@ -90,16 +98,6 @@ namespace :cleanup do
       execute "rm -f #{release_path}/config/initializers/*.rb.example"
     end
   end
-=begin  
-  desc 'Comment out the Postgres gem and run bundler'
-  task :bundler do
-    on roles(:app), wait: 1 do
-      # Run bundler and then any db migrations
-      execute "cd #{release_path} && bundle install --without test"
-      execute "cd #{release_path} && bundle exec rake db:migrate RAILS_ENV=#{fetch :rails_env}"
-    end
-  end
-=end
   
   desc 'Restart Phusion Passenger'
   task :restart_passenger do
