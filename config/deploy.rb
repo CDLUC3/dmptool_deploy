@@ -59,7 +59,7 @@ end
 namespace :git do
   after :create_release, 'remove_postgres'
   after :create_release, 'npm_install'
-  after :create_release, ':webpack_bundle'
+  after :create_release, 'webpack_bundle'
   
   desc 'Remove the postgres dependency from the Gemfile'
   task :remove_postgres do
