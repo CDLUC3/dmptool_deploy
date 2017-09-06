@@ -74,7 +74,7 @@ namespace :git do
   desc 'Install all of the resources managed by NPM'
   task :npm_install do
     on roles(:app), wait: 1 do
-      execute "cd #{release_path}/lib_assets && npm install && cd .."
+      execute "cd #{release_path}/lib/assets && npm install && cd .."
     end
   end
   
