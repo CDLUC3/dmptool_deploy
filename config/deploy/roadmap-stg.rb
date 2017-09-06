@@ -13,12 +13,6 @@ set :default_env, { path: "/dmp/local/bin:$PATH" }
 set :deploy_to, '/dmp/apps/roadmap'
 set :share_to, 'dmp/apps/roadmap/shared'
 
-# precompile assets
-set :assets_roles, [:web, :app]
-set :assets_prefix, 'assets'
-set :rails_assets_groups, :assets
-set :keep_assets, 2
-
 # Define the location of the configuration repo
 set :config_repo, 'git@github.com:cdlib/dmptool_config.git'
 set :config_branch, 'roadmap-stage'
@@ -30,6 +24,9 @@ append :linked_files, 'public/eds.html',
                       'public/idpselect.css',
                       'public/idpselect.js',
                       'public/localDiscoFeed.json'
+
+# Replace the application_helper.rb so that the webpack fingerprinted assets are available for the stage env
+append :linked_files, 'app/helpers/application_helper.rb'
 
 # role-based syntax
 # ==================
@@ -85,16 +82,3 @@ append :linked_files, 'public/eds.html',
 # We are running stage as if it were a prod environment right now
 set :rails_env, 'stage'
 set :passenger_restart, "cd /apps/dmp/init.d && ./passenger-dmp.dmp restart"
-=begin
-namespace :deploy do
-  # We treat STAGE as a production-like environment so force the asset precompilation
-  desc 'Precompile Assets'
-  task :precompile_assets do
-    on roles(:app), wait: 5 do
-      execute "cd #{release_path} && bundle exec rake assets:precompile"
-    end
-  end
-  
-  before :restart_passenger, 'deploy:precompile_assets'
-end
-=end
