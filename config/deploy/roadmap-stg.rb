@@ -1,5 +1,6 @@
 set :application, 'DMPRoadmap'
-set :repo_url, 'https://github.com/DMPRoadmap/roadmap.git'
+#set :repo_url, 'https://github.com/DMPRoadmap/roadmap.git'
+set :repo_url, 'https://github.com/CDLUC3/roadmap.git'
 
 # server-based syntax
 # ======================
@@ -82,3 +83,22 @@ append :linked_files, 'app/helpers/application_helper.rb'
 # We are running stage as if it were a prod environment right now
 set :rails_env, 'stage'
 set :passenger_restart, "cd /apps/dmp/init.d && ./passenger-dmp.dmp restart"
+
+namespace :git do
+  after :create_release, 'npm_install'
+  after :create_release, 'webpack_bundle'
+  
+  desc 'Install all of the resources managed by NPM'
+  task :npm_install do
+    on roles(:app), wait: 1 do
+      execute "cd #{release_path}/lib/assets && npm install && cd .."
+    end
+  end
+  
+  desc 'Bundle the Webpack managed assets'
+  task :webpack_bundle do
+    on roles(:app), wait: 1 do
+      execute "cd #{release_path}/lib/assets && npm run bundle -- -p"
+    end
+  end
+end

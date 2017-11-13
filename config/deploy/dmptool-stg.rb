@@ -1,13 +1,33 @@
+set :application, 'DMPTool'
+#set :repo_url, 'https://github.com/DMPRoadmap/roadmap.git'
+set :repo_url, 'https://github.com/CDLUC3/roadmap.git'
+
 # server-based syntax
 # ======================
 # Defines a single server with a list of roles and multiple properties.
 # You can define all roles on a single server, or split them:
+set :server_host, ENV["SERVER_HOST"] || 'uc3-dmp2-stg.cdlib.org'
+server fetch(:server_host), user: 'dmp', roles: %w{web app db}
 
-# server "example.com", user: "deploy", roles: %w{app db web}, my_property: :my_value
-# server "example.com", user: "deploy", roles: %w{app web}, other_property: :other_value
-# server "db.example.com", user: "deploy", roles: %w{db}
+# Default deploy_to directory is /var/www/my_app_name
+set :default_env, { path: "/dmp/local/bin:$PATH" }
+set :deploy_to, '/dmp/apps/roadmap'
+set :share_to, 'dmp/apps/roadmap/shared'
 
+# Define the location of the configuration repo
+set :config_repo, 'git@github.com:cdlib/dmptool_config.git'
+set :config_branch, 'dmptool-stage'
 
+# Pull in shibboleth IdP selection pages
+append :linked_files, 'public/eds.html',
+                      'public/fullDiscoFeed.json',
+                      'public/idpselect_config.js',
+                      'public/idpselect.css',
+                      'public/idpselect.js',
+                      'public/localDiscoFeed.json'
+
+# Replace the application_helper.rb so that the webpack fingerprinted assets are available for the stage env
+append :linked_files, 'app/helpers/application_helper.rb'
 
 # role-based syntax
 # ==================
@@ -59,3 +79,26 @@
 #     auth_methods: %w(publickey password)
 #     # password: "please use keys"
 #   }
+
+# We are running stage as if it were a prod environment right now
+set :rails_env, 'stage'
+set :passenger_restart, "cd /apps/dmp/init.d && ./passenger-dmp.dmp restart"
+
+namespace :git do
+  after :create_release, 'npm_install'
+  after :create_release, 'webpack_bundle'
+  
+  desc 'Install all of the resources managed by NPM'
+  task :npm_install do
+    on roles(:app), wait: 1 do
+      execute "cd #{release_path}/lib/assets && npm install && cd .."
+    end
+  end
+  
+  desc 'Bundle the Webpack managed assets'
+  task :webpack_bundle do
+    on roles(:app), wait: 1 do
+      execute "cd #{release_path}/lib/assets && npm run bundle -- -p"
+    end
+  end
+end

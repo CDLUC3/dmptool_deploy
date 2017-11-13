@@ -25,6 +25,10 @@ append :linked_files, 'public/eds.html',
                       'public/idpselect.js',
                       'public/localDiscoFeed.json'
 
+# Replace the CSS file with our branded version
+append :linked_files, 'lib/assets/stylesheets/bootstrap_and_overrides.css.less',
+                      'lib/assets/images/logo.png'
+
 # role-based syntax
 # ==================
 
