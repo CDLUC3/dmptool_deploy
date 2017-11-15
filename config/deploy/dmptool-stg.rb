@@ -91,14 +91,14 @@ namespace :git do
   desc 'Install all of the resources managed by NPM'
   task :npm_install do
     on roles(:app), wait: 1 do
-      execute "cd #{release_path}/lib/assets && npm install && cd .."
+      execute "cd #{release_path}/lib/assets && export NVM_DIR=/apps/dmp/apps/nvm && source $NVM_DIR/nvm.sh && npm install && cd .."
     end
   end
   
   desc 'Bundle the Webpack managed assets'
   task :webpack_bundle do
     on roles(:app), wait: 1 do
-      execute "cd #{release_path}/lib/assets && npm run bundle -- -p"
+      execute "cd #{release_path}/lib/assets && export NVM_DIR=/apps/dmp/apps/nvm && source $NVM_DIR/nvm.sh && npm run bundle -- -p"
     end
   end
 end
