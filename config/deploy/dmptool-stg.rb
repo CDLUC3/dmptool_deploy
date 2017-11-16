@@ -11,8 +11,8 @@ server fetch(:server_host), user: 'dmp', roles: %w{web app db}
 
 # Default deploy_to directory is /var/www/my_app_name
 set :default_env, { path: "/dmp/local/bin:$PATH" }
-set :deploy_to, '/dmp/apps/roadmap'
-set :share_to, 'dmp/apps/roadmap/shared'
+set :deploy_to, '/dmp/apps/ui'
+set :share_to, 'dmp/apps/ui/shared'
 
 # Define the location of the configuration repo
 set :config_repo, 'git@github.com:cdlib/dmptool_config.git'
