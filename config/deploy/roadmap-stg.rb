@@ -1,6 +1,6 @@
 set :application, 'DMPRoadmap'
-#set :repo_url, 'https://github.com/DMPRoadmap/roadmap.git'
-set :repo_url, 'https://github.com/CDLUC3/roadmap.git'
+set :repo_url, 'https://github.com/DMPRoadmap/roadmap.git'
+#set :repo_url, 'https://github.com/CDLUC3/roadmap.git'
 
 # server-based syntax
 # ======================
