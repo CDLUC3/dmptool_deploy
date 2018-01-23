@@ -17,12 +17,13 @@ set :share_to, '/dmp/apps/dmp/shared'
 set :config_repo, 'git@github.com:cdlib/dmptool_config.git'
 set :config_branch, 'dmptool-development'
 
-# Pull in branding files
-#append :linked_files, 'assets/images/logo.jpg', 
-#                      'assets/images/favicon.ico',
-#                      'assets/stylesheets/admin.css.less', 
-#                      'assets/stylesheets/boostrap_and_overrides.css.less'
-
+# Pull in shibboleth IdP selection pages
+append :linked_files, 'public/eds.html',
+                      'public/fullDiscoFeed.json',
+                      'public/idpselect_config.js',
+                      'public/idpselect.css',
+                      'public/idpselect.js',
+                      'public/localDiscoFeed.json'
 # role-based syntax
 # ==================
 
@@ -76,3 +77,22 @@ set :config_branch, 'dmptool-development'
 
 set :rails_env, 'development'
 set :passenger_restart, "cd /apps/dmp/init.d && ./passenger-dmp.dmp restart"
+
+namespace :git do
+  after :create_release, 'npm_install'
+  after :create_release, 'webpack_bundle'
+  
+  desc 'Install all of the resources managed by NPM'
+  task :npm_install do
+    on roles(:app), wait: 1 do
+      execute "cd #{release_path}/lib/assets && export NVM_DIR=/apps/dmp/apps/nvm && source $NVM_DIR/nvm.sh && npm install && cd .."
+    end
+  end
+  
+  desc 'Bundle the Webpack managed assets'
+  task :webpack_bundle do
+    on roles(:app), wait: 1 do
+      execute "cd #{release_path}/lib/assets && export NVM_DIR=/apps/dmp/apps/nvm && source $NVM_DIR/nvm.sh && npm run bundle -- -p"
+    end
+  end
+end
