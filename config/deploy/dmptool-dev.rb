@@ -1,27 +1,27 @@
-set :application, 'DMPRoadmap'
-set :repo_url, 'https://github.com/DMPRoadmap/roadmap.git'
+set :application, 'DMPTool'
+set :repo_url, 'https://github.com/CDLUC3/dmp.git'
 
 # server-based syntax
 # ======================
 # Defines a single server with a list of roles and multiple properties.
 # You can define all roles on a single server, or split them:
-set :server_host, ENV["SERVER_HOST"] || 'uc3-dmp2-dev.cdlib.org'
-server fetch(:server_host), user: 'dmp2', roles: %w{web app db}
+set :server_host, ENV["SERVER_HOST"] || 'uc3-dmp-dev.cdlib.org'
+server fetch(:server_host), user: 'dmp', roles: %w{web app db}
 
 # Default deploy_to directory is /var/www/my_app_name
-set :default_env, { path: "/dmp2/local/bin:$PATH" }
-set :deploy_to, '/dmp2/apps/roadmap'
-set :share_to, 'dmp2/apps/roadmap/shared'
+set :default_env, { path: "/dmp/local/bin:$PATH" }
+set :deploy_to, '/dmp/apps/dmp'
+set :share_to, '/dmp/apps/dmp/shared'
 
 # Define the location of the configuration repo
 set :config_repo, 'git@github.com:cdlib/dmptool_config.git'
 set :config_branch, 'dmptool-development'
 
 # Pull in branding files
-append :linked_files, 'assets/images/logo.jpg', 
-                      'assets/images/favicon.ico',
-                      'assets/stylesheets/admin.css.less', 
-                      'assets/stylesheets/boostrap_and_overrides.css.less'
+#append :linked_files, 'assets/images/logo.jpg', 
+#                      'assets/images/favicon.ico',
+#                      'assets/stylesheets/admin.css.less', 
+#                      'assets/stylesheets/boostrap_and_overrides.css.less'
 
 # role-based syntax
 # ==================
