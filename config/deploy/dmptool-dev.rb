@@ -80,7 +80,8 @@ set :passenger_restart, "cd /apps/dmp/init.d && ./passenger-dmp.dmp restart"
 
 namespace :git do
   after :create_release, 'npm_install'
-  after :create_release, 'webpack_bundle'
+  after :npm_install, 'webpack_bundle'
+  after :webpack_bundlem 'move_compiled_jpegs'
   
   desc 'Install all of the resources managed by NPM'
   task :npm_install do
@@ -93,6 +94,15 @@ namespace :git do
   task :webpack_bundle do
     on roles(:app), wait: 1 do
       execute "cd #{release_path}/lib/assets && npm run bundle -- -p"
+    end
+  end
+  
+  # Webpack will compile and place SASS requests for `background: url('file.jpg')` into the root public/ dir
+  # the compiled CSS though will look for these files in public/stylesheets so we need to move them over
+  desc 'Transfer compiled JPEGs over to the public/stylesheets dir'
+  task :move_compiled_jpegs do
+    on roles(:app), wait: 10 do
+      execute "mv #{release_path}/public/*.jpg #{release_path}/public/stylesheets"
     end
   end
 end
