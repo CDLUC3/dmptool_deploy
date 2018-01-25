@@ -80,8 +80,8 @@ set :passenger_restart, "cd /apps/dmp/init.d && ./passenger-dmp.dmp restart"
 
 namespace :git do
   after :create_release, 'npm_install'
-  after :npm_install, 'webpack_bundle'
-  after :webpack_bundlem 'move_compiled_jpegs'
+  after :create_release, 'webpack_bundle'
+  after :create_release, 'move_compiled_jpegs'
   
   desc 'Install all of the resources managed by NPM'
   task :npm_install do
