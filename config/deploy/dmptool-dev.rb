@@ -15,7 +15,7 @@ set :share_to, '/dmp/apps/dmp/shared'
 
 # Define the location of the configuration repo
 set :config_repo, 'git@github.com:cdlib/dmptool_config.git'
-set :config_branch, 'dmptool-development'
+set :config_branch, 'dmptool'
 
 # Pull in shibboleth IdP selection pages
 append :linked_files, 'public/eds.html',
