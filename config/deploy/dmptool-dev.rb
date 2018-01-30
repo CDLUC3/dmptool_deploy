@@ -46,7 +46,7 @@ append :linked_files, 'public/eds.html',
 # http://capistranorb.com/documentation/getting-started/configuration/
 # Feel free to add new variables to customise your setup.
 
-
+8f1029e757c14df1af5e9971c55d8cd7
 
 # Custom SSH Options
 # ==================
@@ -102,7 +102,7 @@ namespace :git do
   desc 'Transfer compiled JPEGs over to the public/stylesheets dir'
   task :move_compiled_jpegs do
     on roles(:app), wait: 10 do
-      execute "mv #{release_path}/public/*.jpg #{release_path}/public/stylesheets"
+      execute "cd #{release_path}/public && ls -1 | egrep '[a-zA-Z0-9]{32}\.[jpg|png]' | xargs mv #{release_path}/public/stylesheets"
     end
   end
 end
