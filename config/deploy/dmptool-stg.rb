@@ -6,13 +6,13 @@ set :repo_url, 'https://github.com/CDLUC3/dmp.git'
 # ======================
 # Defines a single server with a list of roles and multiple properties.
 # You can define all roles on a single server, or split them:
-set :server_host, ENV["SERVER_HOST"] || 'uc3-dmp2-stg.cdlib.org'
+set :server_host, ENV["SERVER_HOST"] || 'uc3-dmp-stg.cdlib.org'
 server fetch(:server_host), user: 'dmp', roles: %w{web app db}
 
 # Default deploy_to directory is /var/www/my_app_name
 set :default_env, { path: "/dmp/local/bin:$PATH" }
-set :deploy_to, '/dmp/apps/roadmap'
-set :share_to, 'dmp/apps/roadmap/shared'
+set :deploy_to, '/dmp/apps/dmp'
+set :share_to, 'dmp/apps/dmp/shared'
 
 # Define the location of the configuration repo
 set :config_repo, 'git@github.com:cdlib/dmptool_config.git'
@@ -25,9 +25,6 @@ append :linked_files, 'public/eds.html',
                       'public/idpselect.css',
                       'public/idpselect.js',
                       'public/localDiscoFeed.json'
-
-# Replace the application_helper.rb so that the webpack fingerprinted assets are available for the stage env
-append :linked_files, 'app/helpers/application_helper.rb'
 
 # role-based syntax
 # ==================
@@ -92,14 +89,14 @@ namespace :git do
   desc 'Install all of the resources managed by NPM'
   task :npm_install do
     on roles(:app), wait: 1 do
-      execute "cd #{release_path}/lib/assets && export NVM_DIR=/apps/dmp/apps/nvm && source $NVM_DIR/nvm.sh && npm install && cd .."
+      execute "cd #{release_path}/lib/assets && npm install && cd .."
     end
   end
   
   desc 'Bundle the Webpack managed assets'
   task :webpack_bundle do
     on roles(:app), wait: 1 do
-      execute "cd #{release_path}/lib/assets && export NVM_DIR=/apps/dmp/apps/nvm && source $NVM_DIR/nvm.sh && npm run bundle -- -p"
+      execute "cd #{release_path}/lib/assets && npm run bundle -- -p"
     end
   end
   
