@@ -1,5 +1,5 @@
 set :application, 'DMPTool'
-set :repo_url, 'https://github.com/CDLUC3/dmp.git'
+set :repo_url, 'https://github.com/CDLUC3/dmptool.git'
 
 # server-based syntax
 # ======================
