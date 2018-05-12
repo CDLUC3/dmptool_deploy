@@ -35,11 +35,7 @@ append :linked_files, #'assets/images/logo.jpg',
                       'config/initializers/recaptcha.rb',
                       'config/initializers/contact_us.rb',
                       'config/initializers/devise.rb',
-                      'config/initializers/wicked_pdf.rb',
-                      'config/locales/static_pages/de.static.yml',
-                      'config/locales/static_pages/en-UK.static.yml',
-                      'config/locales/static_pages/en-US.static.yml',
-                      'config/locales/static_pages/fr.static.yml'
+                      'config/initializers/wicked_pdf.rb'
 
 # Default value for linked_dirs is []
 append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'public/system', 'config/environments'
