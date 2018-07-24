@@ -18,6 +18,9 @@ set :share_to, '/dmp/apps/dmp/shared'
 set :config_repo, 'git@github.com:cdlib/dmptool_config.git'
 set :config_branch, 'dmptool'
 
+# Make sure bundler includes the development gems
+set :bundle_without, %w{test}.join(' ')
+
 # Pull in shibboleth IdP selection pages
 append :linked_files, 'public/eds.html',
                       'public/fullDiscoFeed.json',
@@ -81,21 +84,21 @@ namespace :git do
   after :create_release, 'npm_install'
   after :create_release, 'webpack_bundle'
   after :create_release, 'move_compiled_jpegs'
-  
+
   desc 'Install all of the resources managed by NPM'
   task :npm_install do
     on roles(:app), wait: 1 do
       execute "cd #{release_path}/lib/assets && npm install && cd .."
     end
   end
-  
+
   desc 'Bundle the Webpack managed assets'
   task :webpack_bundle do
     on roles(:app), wait: 1 do
       execute "cd #{release_path}/lib/assets && npm run bundle -- -p"
     end
   end
-  
+
   # Webpack will compile and place SASS requests for `background: url('file.jpg')` into the root public/ dir
   # the compiled CSS though will look for these files in public/stylesheets so we need to move them over
   desc 'Transfer compiled JPEGs over to the public/stylesheets dir'
