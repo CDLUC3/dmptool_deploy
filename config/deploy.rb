@@ -29,10 +29,7 @@ set :bundle_without, %w{development test}.join(' ')
 # set :pty, true
 
 # Default value for :linked_files is []
-append :linked_files, #'assets/images/logo.jpg',
-                      #'assets/stylesheets/admin.css.less',
-                      #'assets/stylesheets/bootstrap_and_overrides.css.less',
-                      'config/database.yml',
+append :linked_files, 'config/database.yml',
                       'config/secrets.yml',
                       'config/branding.yml',
                       'config/initializers/recaptcha.rb',
@@ -50,8 +47,6 @@ namespace :deploy do
   before :deploy, 'config:install_shared_dir'
 
   after :deploy, 'cleanup:remove_example_configs'
-
-#  after :deploy, 'cleanup:bundler'
 
   after :deploy, 'cleanup:restart_passenger'
 end

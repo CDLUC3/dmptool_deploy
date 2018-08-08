@@ -84,21 +84,21 @@ append :linked_files, 'app/helpers/application_helper.rb'
 set :rails_env, 'stage'
 set :passenger_restart, "cd /apps/dmp/init.d && ./passenger-dmp.dmp restart"
 
-namespace :git do
-  after :create_release, 'npm_install'
-  after :create_release, 'webpack_bundle'
+# namespace :git do
+  # after :create_release, 'npm_install'
+  # after :create_release, 'webpack_bundle'
   
-  desc 'Install all of the resources managed by NPM'
-  task :npm_install do
-    on roles(:app), wait: 1 do
-      execute "cd #{release_path}/lib/assets && npm install && cd .."
-    end
-  end
+  # desc 'Install all of the resources managed by NPM'
+  # task :npm_install do
+  #   on roles(:app), wait: 1 do
+  #     execute "cd #{release_path}/lib/assets && npm install && cd .."
+  #   end
+  # end
   
-  desc 'Bundle the Webpack managed assets'
-  task :webpack_bundle do
-    on roles(:app), wait: 1 do
-      execute "cd #{release_path}/lib/assets && npm run bundle -- -p"
-    end
-  end
-end
+  # desc 'Bundle the Webpack managed assets'
+  # task :webpack_bundle do
+  #   on roles(:app), wait: 1 do
+  #     execute "cd #{release_path}/lib/assets && npm run bundle -- -p"
+  #   end
+  # end
+# end
