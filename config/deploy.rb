@@ -1,32 +1,12 @@
 # config valid only for current version of Capistrano
 lock "3.8.1"
 
-# SEE INDIVIDUAL DEPLOY FILES FOR THESE SETTINGS
-# --------------------------------------------------
-#set :application, "my_app_name"
-#set :repo_url, "git@example.com:me/my_repo.git"
-
 # Default branch is :master
 ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp unless ENV['BRANCH']
 set :branch, ENV['BRANCH'] if ENV['BRANCH']
 
 # Default environments to skip
 set :bundle_without, %w{development test}.join(' ')
-
-# SEE INDIVIDUAL DEPLOY FILES FOR THIS SETTINGS
-# --------------------------------------------------
-# Default deploy_to directory is /var/www/my_app_name
-# set :deploy_to, "/var/www/my_app_name"
-
-# Default value for :format is :airbrussh.
-# set :format, :airbrussh
-
-# You can configure the Airbrussh format using :format_options.
-# These are the defaults.
-# set :format_options, command_output: true, log_file: "log/capistrano.log", color: :auto, truncate: :auto
-
-# Default value for :pty is false
-# set :pty, true
 
 # Default value for :linked_files is []
 append :linked_files, 'config/database.yml',
@@ -47,11 +27,25 @@ namespace :deploy do
   before :deploy, 'config:install_shared_dir'
   after :deploy, 'cleanup:remove_example_configs'
   after :deploy, 'cleanup:restart_passenger'
+
+  namespace :assets do
+    before :backup_manifest, 'deploy:create_asset_manifests'
+  end
+
+  desc 'Create an empty assets manifest to satisfy Capistrano rails assets gem'
+  task :create_asset_manifests do
+    on roles(:app), wait: 1 do
+      execute "cd #{release_path} && mkdir -p public/assets"
+      execute "cd #{release_path} && touch public/assets/manifest.json"
+      execute "cd #{release_path} && touch public/assets/.sprockets-manifest.json"
+    end
+  end
 end
 
 namespace :git do
   after :create_release, 'remove_postgres'
-    
+  #after :create_release, 'create_asset_manifests'
+
   desc 'Remove the postgres dependency from the Gemfile'
   task :remove_postgres do
     on roles(:app), wait: 1 do
@@ -81,15 +75,6 @@ namespace :cleanup do
       execute "rm -f #{release_path}/config/*_example.yml"
       execute "rm -f #{release_path}/config/initializers/contac_us_example.rb"
       execute "rm -f #{release_path}/config/initializers/*.rb.example"
-    end
-  end
-  
-  desc "Precompile assets using npm/webpack"
-  task :compile_assets do
-    on roles(:app), wait: 1 do
-      # The codebase has overriden the assets:precompile to run npm and webpack but we don't want use Cap's builtin
-      # assets manager because it runs other tasks like manifest file backup that will fail
-      execute "cd #{release_path} && bundle exec rake assets:precompile"
     end
   end
 
