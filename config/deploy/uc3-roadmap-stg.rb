@@ -12,6 +12,6 @@ set :share_to, 'dmp/apps/roadmap/shared'
 set :config_repo, 'git@github.com:cdlib/dmptool_config.git'
 set :config_branch, 'roadmap'
 
-set :rails_env, 'production'
+set :rails_env, 'development'
 
 set :passenger_restart, "cd /apps/dmp/init.d && ./passenger-dmp.dmp restart"

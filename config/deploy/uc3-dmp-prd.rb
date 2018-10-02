@@ -26,6 +26,9 @@ append :linked_files, 'public/eds.html',
                       'public/idpselect.js',
                       'public/localDiscoFeed.json'
 
+# Default environments to skip
+set :bundle_without, %w{development test}.join(' ')
+
 # role-based syntax
 # ==================
 

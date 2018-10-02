@@ -6,7 +6,7 @@ ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp unless ENV['BRANCH']
 set :branch, ENV['BRANCH'] if ENV['BRANCH']
 
 # Default environments to skip
-set :bundle_without, %w{development test}.join(' ')
+set :bundle_without, %w{test}.join(' ')
 
 # Default value for :linked_files is []
 append :linked_files, 'config/database.yml',
@@ -28,18 +28,20 @@ namespace :deploy do
   after :deploy, 'cleanup:remove_example_configs'
   after :deploy, 'cleanup:restart_passenger'
 
-  namespace :assets do
-    before :backup_manifest, 'deploy:create_asset_manifests'
-  end
+# TODO: Uncomment this for deployments to dmp-dev or roadmap-stg and permenantly once we have
+#       merged the latest changes into dmptool stage and prod
+#  namespace :assets do
+#    before :backup_manifest, 'deploy:create_asset_manifests'
+#  end
 
-  desc 'Create an empty assets manifest to satisfy Capistrano rails assets gem'
-  task :create_asset_manifests do
-    on roles(:app), wait: 1 do
-      execute "cd #{release_path} && mkdir -p public/assets"
-      execute "cd #{release_path} && touch public/assets/manifest.json"
-      execute "cd #{release_path} && touch public/assets/.sprockets-manifest.json"
-    end
-  end
+#  desc 'Create an empty assets manifest to satisfy Capistrano rails assets gem'
+#  task :create_asset_manifests do
+#    on roles(:app), wait: 1 do
+#      execute "cd #{release_path} && mkdir -p public/assets"
+#      execute "cd #{release_path} && touch public/assets/manifest.json"
+#      execute "cd #{release_path} && touch public/assets/.sprockets-manifest.json"
+#    end
+#  end
 end
 
 namespace :git do
