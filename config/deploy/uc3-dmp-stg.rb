@@ -19,15 +19,7 @@ set :config_repo, 'git@github.com:cdlib/dmptool_config.git'
 set :config_branch, 'master'
 
 # Copy over the homepage images
-append :linked_files, 'lib/assets/images/homepage/*.*'
-
-# Pull in shibboleth IdP selection pages
-#append :linked_files, 'public/eds.html',
-#                      'public/fullDiscoFeed.json',
-#                      'public/idpselect_config.js',
-#                      'public/idpselect.css',
-#                      'public/idpselect.js',
-#                      'public/localDiscoFeed.json'
+append :linked_dirs, 'lib/assets/images/homepage'
 
 # Default environments to skip
 set :bundle_without, %w{development test}.join(' ')
@@ -38,9 +30,6 @@ set :passenger_restart, "cd /apps/dmp/init.d && ./passenger-dmp.dmp restart"
 
 namespace :git do
   after :create_release, 'npm_install'
-  after :create_release, 'webpack_bundle'
-  after :create_release, 'move_compiled_jpegs'
-  after :create_release, 'swap_in_stage'
 
   desc 'Install all of the resources managed by NPM'
   task :npm_install do
@@ -48,7 +37,14 @@ namespace :git do
       execute "cd #{release_path}/lib/assets && npm install && cd .."
     end
   end
+end
 
+namespace :deploy do
+  before :migrate, 'swap_in_stage'
+  after :cleanup, 'webpack_bundle'
+  after :cleanup, 'move_compiled_jpegs'
+
+  # Update this for Roadmap v2.x
   desc 'Bundle the Webpack managed assets'
   task :webpack_bundle do
     on roles(:app), wait: 1 do
@@ -65,18 +61,23 @@ namespace :git do
     end
   end
 
+  # We run stage in Rails production mode so change the 'production:' portions of the database.yml
+  # and secrets.yml to 'live:' and then change 'stage:' to 'production:'
+  # This MUST run before db:migrate!!!
   desc "Swap in Stage server database/secrets configs and production.rb"
   task :swap_in_stage do
     on roles(:app), wait: 1 do
-      execute "cd #{release_path} && cat config/database.yml | sed 's/production:/live:/' >> config/database2.yml"
-      execute "cd #{release_path} && cat config/database2.yml | sed 's/stage:/production:/' >> config/database.yml"
-      execute "cd #{release_path} && cat config/secrets.yml | sed 's/production:/live:/' >> config/secrets2.yml"
-      execute "cd #{release_path} && cat config/secrets2.yml | sed 's/stage:/production:/' >> config/secrets.yml"
-      execute "cd #{release_path} && cat config/environments/production.rb | sed 's/config.log_level = :warn/config.log_level = :debug/' >> config/environments/production.rb"
+      execute "cd #{release_path}/config && cp database.yml database-stg.yml && cp secrets.yml secrets-stg.yml"
+      execute "cd #{release_path}/config && rm database.yml && rm secrets.yml"
+      execute "cd #{release_path}/config && cat database-stg.yml | sed 's/production:/live:/g' > database2.yml"
+      execute "cd #{release_path}/config && cat database2.yml | sed 's/stage:/production:/g' > database.yml"
+      execute "cd #{release_path}/config && cat secrets-stg.yml | sed 's/production:/live:/g' > secrets2.yml"
+      execute "cd #{release_path}/config && cat secrets2.yml | sed 's/stage:/production:/g' > secrets.yml"
+      execute "cd #{release_path}/config && rm database-stg.yml && rm secrets-stg.yml"
+      execute "cd #{release_path}/config && rm database2.yml && rm secrets2.yml"
     end
   end
 end
-
 
 
 # TODO: The snippet below is for use with the new DMPRoadmap changes which overrides the

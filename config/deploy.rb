@@ -28,6 +28,7 @@ namespace :deploy do
   after :deploy, 'cleanup:remove_example_configs'
   after :deploy, 'cleanup:restart_passenger'
 
+# FOR NEW Roadmap 2.x configuration
 # TODO: Uncomment this for deployments to dmp-dev or roadmap-stg and permenantly once we have
 #       merged the latest changes into dmptool stage and prod
 #  namespace :assets do
@@ -55,6 +56,9 @@ namespace :git do
       execute "cd #{release_path} && mv Gemfile Gemfile.bak"
       execute "cd #{release_path} && cat Gemfile.bak | sed 's/gem \\x27pg\\x27/#gem \\x27pg\\x27/' >> Gemfile"
       execute "cd #{release_path} && bundle install"
+
+      # FOR NEW Roadmap 2.x configuration
+      #execute "cd #{release_path} && bundle install --without puma psql thin"
     end
   end
 end
