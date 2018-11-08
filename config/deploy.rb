@@ -8,24 +8,22 @@ set :branch, ENV['BRANCH'] if ENV['BRANCH']
 set :default_env, { path: "/dmp/local/bin:$PATH" }
 
 # Default environments to skip
-set :bundle_without, %w{ test puma thin psql }
+set :bundle_without, %w{ puma pgsql thin rollbar test }.join(' ')
 
 # Define the location of the private configuration repo
 set :config_repo, 'git@github.com:cdlib/dmptool_config.git'
 
-# STILL NEEDED FOR PROD
 # Default value for :linked_files is []
-#append :linked_files, 'config/database.yml',
-#                      'config/secrets.yml',
-#                      'config/branding.yml',
-#                      'config/initializers/recaptcha.rb',
-#                      'config/initializers/contact_us.rb',
-#                      'config/initializers/devise.rb',
-#                      'config/initializers/wicked_pdf.rb'
+append :linked_files, 'config/database.yml',
+                      'config/secrets.yml',
+                      'config/branding.yml',
+                      'config/initializers/recaptcha.rb',
+                      'config/initializers/contact_us.rb',
+                      'config/initializers/devise.rb',
+                      'config/initializers/wicked_pdf.rb'
 
 # Default value for linked_dirs is []
-append :linked_dirs, 'config',
-                     'log',
+append :linked_dirs, 'log',
                      'tmp/pids',
                      'tmp/cache',
                      'tmp/sockets',
@@ -36,9 +34,9 @@ set :keep_releases, 5
 
 namespace :deploy do
   # STILL NEEDED FOR PROD
-  #before :deploy, 'config:install_shared_dir'
-  # STILL NEEDED FOR PROD
   #after :deploy, 'cleanup:remove_example_configs'
+
+  before :deploy, 'config:install_shared_dir'
   after :deploy, 'cleanup:restart_passenger'
 
 # FOR NEW Roadmap 2.x configuration
@@ -80,16 +78,15 @@ end
   #end
 #end
 
-# STILL NEEDED FOR PROD
-#namespace :config do
-#  desc 'Setup up the config repo as the shared directory'
-#  task :install_shared_dir do
-#    on roles(:app), wait: 1 do
-#      execute "if [ ! -d '#{deploy_path}/shared/' ]; then cd #{deploy_path}/ && git clone #{fetch :config_repo} shared; fi"
-#      execute "cd #{deploy_path}/shared/ && git checkout #{fetch :config_branch} && git pull origin #{fetch :config_branch}"
-#    end
-#  end
-#end
+namespace :config do
+  desc 'Setup up the config repo as the shared directory'
+  task :install_shared_dir do
+    on roles(:app), wait: 1 do
+      execute "if [ ! -d '#{deploy_path}/shared/' ]; then cd #{deploy_path}/ && git clone #{fetch :config_repo} shared; fi"
+      execute "cd #{deploy_path}/shared/ && git checkout #{fetch :config_branch} && git pull origin #{fetch :config_branch}"
+    end
+  end
+end
 
 namespace :cleanup do
   # STILL NEEDED FOR PROD
