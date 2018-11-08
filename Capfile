@@ -12,7 +12,7 @@ require 'capistrano/bundler'
 
 # TODO: Uncomment this for deployments to dmp-dev or roadmap-stg and permenantly once we have
 #       merged the latest changes into dmptool stage and prod
-#require "capistrano/rails/assets"
+require "capistrano/rails/assets"
 
 require 'capistrano/rails/migrations'
 
