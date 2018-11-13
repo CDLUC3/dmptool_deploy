@@ -11,7 +11,3 @@ set :share_to, 'dmp/apps/roadmap/shared'
 set :config_branch, 'roadmap'
 
 set :rails_env, 'production'
-
-#set :bundle_without, %w{ puma psql thin }
-
-
