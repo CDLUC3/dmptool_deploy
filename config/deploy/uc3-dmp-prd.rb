@@ -19,7 +19,7 @@ set :config_repo, 'git@github.com:cdlib/dmptool_config.git'
 set :config_branch, 'master'
 
 # Copy over the homepage images
-append :linked_dirs, 'lib/assets/images/homepage'
+append :linked_dirs, 'public/assets/homepage'
 
 # Default environments to skip
 set :bundle_without, %w{development test}.join(' ')
@@ -38,6 +38,8 @@ namespace :git do
     end
   end
 end
+
+
 
 namespace :deploy do
   after :cleanup, 'webpack_bundle'
