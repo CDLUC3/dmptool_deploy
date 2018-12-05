@@ -39,7 +39,21 @@ namespace :git do
   end
 end
 
+# Interim step that moves image assets back from the public/assets to lib/assets
+# dir for old webpack style assets
+namespace :deploy do
+  namespace :symlink do
+    after :linked_dirs, 'move_jpegs'
 
+    desc 'Transfer compiled JPEGs over to the public/stylesheets dir'
+    task :move_jpegs do
+      on roles(:app), wait: 10 do
+        execute "cd #{release_path}/public/assets/homepage/ && ls -1 | egrep '*\\.[jpg|png]' | xargs cp -t #{release_path}/lib/assets/images/homepage"
+      end
+    end
+
+  end
+end
 
 namespace :deploy do
   after :cleanup, 'webpack_bundle'
