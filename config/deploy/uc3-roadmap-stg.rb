@@ -8,6 +8,6 @@ set :deploy_to, '/dmp/apps/roadmap'
 set :share_to, 'dmp/apps/roadmap/shared'
 
 # Define the location of the private configuration repo
-set :config_branch, 'roadmap'
+set :config_branch, 'uc3-roadmap-stg'
 
 set :rails_env, 'production'

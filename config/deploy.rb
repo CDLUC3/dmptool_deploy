@@ -38,7 +38,7 @@ append :linked_dirs, 'log',
                      'tmp/pids',
                      'tmp/cache',
                      'tmp/sockets',
-                     'public/system'
+                     'config/environments'
 
 # Default value for keep_releases is 5
 set :keep_releases, 5
