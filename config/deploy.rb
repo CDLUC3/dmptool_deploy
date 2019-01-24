@@ -13,11 +13,6 @@ set :bundle_without, %w{ puma pgsql thin rollbar test }.join(' ')
 # Define the location of the private configuration repo
 set :config_repo, 'git@github.com:cdlib/dmptool_config.git'
 
-# ------------------------------------------------------------
-# TODO: Remove the shib files below from the public/* dir
-#       and then remove the files themselves from the dmptool_config repo
-# ------------------------------------------------------------
-
 # Default value for :linked_files is []
 append :linked_files, 'config/database.yml',
                       'config/secrets.yml',
@@ -32,7 +27,8 @@ append :linked_dirs, 'log',
                      'tmp/pids',
                      'tmp/cache',
                      'tmp/sockets',
-                     'config/environments'
+                     'config/environments',
+                     'public'
 
 # Default value for keep_releases is 5
 set :keep_releases, 5
