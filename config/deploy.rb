@@ -35,6 +35,7 @@ set :keep_releases, 5
 
 namespace :deploy do
   before :deploy, 'config:install_shared_dir'
+  after :deploy, 'cleanup:copy_tinymce_skins'
   after :deploy, 'cleanup:remove_example_configs'
   after :deploy, 'cleanup:restart_passenger'
 end
@@ -55,6 +56,13 @@ namespace :cleanup do
     on roles(:app), wait: 1 do
       execute "rm -f #{release_path}/config/*.yml.sample"
       execute "rm -f #{release_path}/config/initializers/*.rb.example"
+    end
+  end
+
+  desc "Move Tinymce skins into public dir"
+  task :copy_tinymce_skins do
+    on roles(:app), wait: 1 do
+      execute "if [ ! -d '#{release_path}/public/tinymce/' ]; then cd #{release_path}/ && mkdir public/tinymce && cp -r node_modules/tinymce/skins public/tinymce; fi"
     end
   end
 
