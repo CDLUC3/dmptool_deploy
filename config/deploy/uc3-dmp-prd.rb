@@ -8,7 +8,7 @@ set :deploy_to, '/dmp/apps/dmp'
 set :share_to, 'dmp/apps/dmp/shared'
 
 # Define the location of the private configuration repo
-set :config_branch, 'uc3-dmp-prd'
+set :config_branch, 'master'
 
 set :rails_env, 'production'
 

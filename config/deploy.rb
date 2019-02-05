@@ -36,6 +36,7 @@ set :keep_releases, 5
 namespace :deploy do
   before :deploy, 'config:install_shared_dir'
   after :deploy, 'cleanup:copy_tinymce_skins'
+  after :deploy, 'cleanup:copy_logo'
   after :deploy, 'cleanup:remove_example_configs'
   after :deploy, 'cleanup:restart_passenger'
 end
@@ -63,6 +64,13 @@ namespace :cleanup do
   task :copy_tinymce_skins do
     on roles(:app), wait: 1 do
       execute "if [ ! -d '#{release_path}/public/tinymce/' ]; then cd #{release_path}/ && mkdir public/tinymce && cp -r node_modules/tinymce/skins public/tinymce; fi"
+    end
+  end
+
+  desc "Move DMPTool logo into public dir for Shib"
+  task :copy_logo do
+    on roles(:app), wait: 1 do
+      execute "if [ ! -d '#{release_path}/public/images/' ]; then cd #{release_path}/ && mkdir public/images && cp app/assets/DMPTool_logo_blue_shades_v1b3b.svg public/images; fi"
     end
   end
 
