@@ -11,3 +11,14 @@ set :share_to, 'dmp/apps/roadmap/shared'
 set :config_branch, 'uc3-roadmap-stg'
 
 set :rails_env, 'production'
+
+namespace :cleanup do
+  desc "Move DMPTool logo into public dir for Shib"
+  task :copy_logo do
+    on roles(:app), wait: 1 do
+      # Forcing the skip of this step since the DMPTool does not exist in Roadmap and
+      # we don't need a Shib logo for it
+      # execute "if [ ! -d '#{release_path}/public/images/' ]; then cd #{release_path}/ && mkdir public/images && cp app/assets/DMPTool_logo_blue_shades_v1b3b.svg public/images; fi"
+    end
+  end
+end
