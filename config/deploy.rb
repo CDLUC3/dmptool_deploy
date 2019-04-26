@@ -33,12 +33,59 @@ append :linked_dirs, 'log',
 # Default value for keep_releases is 5
 set :keep_releases, 5
 
+# Passenger
+set :passenger_in_gemfile, true
+set :passenger_restart_with_touch, false
+set :passenger_restart_options, -> { "#{deploy_to} --ignore-passenger-not-running" }
+set :passenger_environment_variables, {}
+set :passenger_pid, "#{deploy_to}/passenger.pid"
+set :passenger_log, "#{deploy_to}/passenger.log"
+set :passenger_port, "3000"
+
 namespace :deploy do
   before :deploy, 'config:install_shared_dir'
   after :deploy, 'cleanup:copy_tinymce_skins'
   after :deploy, 'cleanup:copy_logo'
   after :deploy, 'cleanup:remove_example_configs'
-  after :deploy, 'cleanup:restart_passenger'
+  after :deploy, 'deploy:restart'
+
+  desc 'Restart Phusion'
+  task :restart do
+    on roles(:app), wait: 5 do
+      # Your restart mechanism here, for example:
+      invoke 'deploy:stop'
+      invoke 'deploy:start'
+    end
+  end
+
+  #Rake::Task["start"].clear_actions
+  desc 'Start Phusion'
+  task :start do
+    on roles(:app) do
+      within current_path do
+        with rails_env: fetch(:rails_env) do
+          execute "cd /apps/dmp/init.d && passenger start -d --environment #{fetch(:rails_env)} "\
+              "--pid-file #{fetch(:passenger_pid)} -p #{fetch(:passenger_port)} "\
+              "--log-file #{fetch(:passenger_log)} --pool-idle-time 86400"
+        end
+      end
+    end
+  end
+
+  #Rake::Task["stop"].clear_actions
+  desc 'Stop Phusion'
+  task :stop do
+    on roles(:app) do
+      if test("[ -f '#{fetch(:passenger_pid)}' ]")
+        execute "cd /apps/dmp/init.d && passenger stop --pid-file #{fetch(:passenger_pid)}"
+      end
+    end
+  end
+
+  after :restart, :clear_cache do
+    on roles(:web), in: :groups, limit: 3, wait: 10 do
+    end
+  end
 end
 
 namespace :config do
@@ -70,19 +117,7 @@ namespace :cleanup do
   desc "Move DMPTool logo into public dir for Shib"
   task :copy_logo do
     on roles(:app), wait: 1 do
-      execute "if [ ! -d '#{release_path}/public/images/' ]; then cd #{release_path}/ && mkdir public/images && cp app/assets/DMPTool_logo_blue_shades_v1b3b.svg public/images; fi"
-    end
-  end
-
-  desc 'Restart Phusion Passenger'
-  task :restart_passenger do
-    on roles(:app), wait: 5 do
-      execute "cd /apps/dmp/init.d && ./passenger-dmp.dmp restart"
-    end
-  end
-
-  after :restart_passenger, :clear_cache do
-    on roles(:web), in: :groups, limit: 3, wait: 10 do
+      execute "if [ ! -d '#{release_path}/public/images/' ]; then cd #{release_path}/ && mkdir public/images && cp app/assets/images/DMPTool_logo_blue_shades_v1b3b.svg public/images; fi"
     end
   end
 end
