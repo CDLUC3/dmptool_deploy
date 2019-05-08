@@ -9,6 +9,8 @@ set :default_env, { path: "/dmp/local/bin:$PATH" }
 
 # Default environments to skip
 set :bundle_without, %w{ puma pgsql thin rollbar test }.join(' ')
+# Include optional Gem groups
+set :bundle_with, %w{ aws }
 
 # Define the location of the private configuration repo
 set :config_repo, 'git@github.com:cdlib/dmptool_config.git'
